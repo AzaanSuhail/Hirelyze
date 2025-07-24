@@ -1,3 +1,5 @@
+import("pdfjs-dist");
+
 export interface PdfConversionResult {
     imageUrl: string;
     file: File | null;
