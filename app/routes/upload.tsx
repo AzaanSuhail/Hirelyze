@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router';
 import FileUploader from '~/components/FileUploader';
 import Navbar from '~/components/Navbar'
 import { usePuterStore } from '~/lib/puter';
+import {convertPdfToImage} from "~/lib/pdf2img";
+import {generateUUID} from "~/lib/utils";
+import {prepareInstructions} from "../../constants";
 
 const upload = () => {
 
-    const { auth, isLoading, fs, ai, kv } = usePuterStore();
+    const { auth, isLoading, fs, ai, kv } = usePuterStore();  /* fs stands for file storage */
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [statusText, setStatusText] = useState('');
@@ -49,6 +52,7 @@ const upload = () => {
             uploadedFile.path,
             prepareInstructions({ jobTitle, jobDescription })
         )
+
         if (!feedback) return setStatusText('Error: Failed to analyze resume');
 
         const feedbackText = typeof feedback.message.content === 'string'
@@ -81,7 +85,7 @@ const upload = () => {
     return (
         <main className="bg-[url('/images/bg-main.svg')] bg-cover">
             <Navbar />
-            
+
             <section className="main-section">
                 <div className="page-heading py-16">
                     <h1>Smart feedback for your dream job</h1>
