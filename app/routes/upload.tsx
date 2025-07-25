@@ -1,21 +1,19 @@
-import React, { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router';
-import FileUploader from '~/components/FileUploader';
-import Navbar from '~/components/Navbar'
-import { usePuterStore } from '~/lib/puter';
+import {type FormEvent, useState} from 'react'
+import Navbar from "~/components/Navbar";
+import FileUploader from "~/components/FileUploader";
+import {usePuterStore} from "~/lib/puter";
+import {useNavigate} from "react-router";
 import {convertPdfToImage} from "~/lib/pdf2img";
 import {generateUUID} from "~/lib/utils";
 import {prepareInstructions} from "../../constants";
 
-const upload = () => {
-
-    const { auth, isLoading, fs, ai, kv } = usePuterStore();  /* fs stands for file storage */
+const Upload = () => {
+    const { auth, isLoading, fs, ai, kv } = usePuterStore();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [statusText, setStatusText] = useState('');
     const [file, setFile] = useState<File | null>(null);
 
-    
     const handleFileSelect = (file: File | null) => {
         setFile(file)
     }
@@ -52,7 +50,6 @@ const upload = () => {
             uploadedFile.path,
             prepareInstructions({ jobTitle, jobDescription })
         )
-
         if (!feedback) return setStatusText('Error: Failed to analyze resume');
 
         const feedbackText = typeof feedback.message.content === 'string'
@@ -66,18 +63,17 @@ const upload = () => {
         navigate(`/resume/${uuid}`);
     }
 
-
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget.closest('form');
-        if (!form) return;
+        if(!form) return;
         const formData = new FormData(form);
 
         const companyName = formData.get('company-name') as string;
         const jobTitle = formData.get('job-title') as string;
         const jobDescription = formData.get('job-description') as string;
 
-        if (!file) return;
+        if(!file) return;
 
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }
@@ -97,7 +93,6 @@ const upload = () => {
                     ) : (
                         <h2>Drop your resume for an ATS score and improvement tips</h2>
                     )}
-
                     {!isProcessing && (
                         <form id="upload-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
                             <div className="form-div">
@@ -128,5 +123,4 @@ const upload = () => {
         </main>
     )
 }
-
-export default upload
+export default Upload
