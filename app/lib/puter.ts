@@ -350,7 +350,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
           ],
         },
       ],
-      { model: "openai/gpt-5.2" },
+      { model: "openai/gpt-5.2" }
     ) as Promise<AIResponse | undefined>;
   };
 
@@ -454,3 +454,4 @@ export const usePuterStore = create<PuterStore>((set, get) => {
     clearError: () => set({ error: null }),
   };
 });
+
