@@ -362,26 +362,38 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       return;
     }
 
-    return puter.ai.chat(
-      [
-        {
-          role: "user",
-          content: [
-            {
-              type: "file",
-              puter_path: path,
-            },
-            {
-              type: "text",
-              text: message,
-            },
-          ],
-        },
-      ],
-      undefined, // imageURL (not using)
-      undefined, // testMode (not using)
-      { model: "claude-sonnet-4" }, // ✅ CORRECT POSITION
-    ) as Promise<AIResponse | undefined>;
+    try {
+      // 🔥 Ensure user is signed in
+      const isSignedIn = await puter.auth.isSignedIn();
+
+      if (!isSignedIn) {
+        await puter.auth.signIn();
+      }
+
+      return (await puter.ai.chat(
+        [
+          {
+            role: "user",
+            content: [
+              {
+                type: "file",
+                puter_path: path,
+              },
+              {
+                type: "text",
+                text: message,
+              },
+            ],
+          },
+        ],
+        undefined,
+        undefined,
+        { model: "claude-sonnet-4" },
+      )) as Promise<AIResponse | undefined>;
+    } catch (err) {
+      console.error("AI Error:", err);
+      setError("AI request failed");
+    }
   };
   const img2txt = async (image: string | File | Blob, testMode?: boolean) => {
     const puter = getPuter();
